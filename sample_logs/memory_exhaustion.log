@@ -1,0 +1,22 @@
+2024-03-18 02:00:00,000 INFO  [scheduler] Nightly batch job started: process_reports
+2024-03-18 02:00:01,123 INFO  [batch] Loading 250,000 records from reporting_db
+2024-03-18 02:01:44,500 WARN  [jvm] GC overhead: 72% time spent in garbage collection
+2024-03-18 02:02:10,600 WARN  [jvm] Old generation heap at 88% (7040MB / 8000MB)
+2024-03-18 02:02:45,700 WARN  [jvm] Old generation heap at 95% (7600MB / 8000MB)
+2024-03-18 02:03:01,800 ERROR [batch] java.lang.OutOfMemoryError: Java heap space
+ Exception in thread "batch-worker-1" java.lang.OutOfMemoryError: Java heap space
+    at java.util.Arrays.copyOf(Arrays.java:3210)
+    at java.util.ArrayList.grow(ArrayList.java:265)
+    at com.example.batch.ReportProcessor.loadRecords(ReportProcessor.java:122)
+    at com.example.batch.ReportProcessor.run(ReportProcessor.java:55)
+2024-03-18 02:03:01,900 ERROR [batch] java.lang.OutOfMemoryError: Java heap space
+ Exception in thread "batch-worker-2" java.lang.OutOfMemoryError: Java heap space
+    at java.util.Arrays.copyOf(Arrays.java:3210)
+2024-03-18 02:03:02,000 CRITICAL [batch] Out of memory — batch job aborting
+2024-03-18 02:03:02,100 ERROR [jvm] Cannot allocate memory for new object: heap exhausted
+2024-03-18 02:03:02,200 ERROR [scheduler] Batch job process_reports FAILED after 182s
+2024-03-18 02:03:02,300 WARN  [monitor] Memory alert: process memory usage 7800MB / 8000MB
+2024-03-18 02:03:03,000 ERROR [app] Worker threads terminating due to OOM condition
+2024-03-18 02:03:04,000 INFO  [jvm] Full GC triggered — reclaiming memory
+2024-03-18 02:03:10,000 INFO  [jvm] Heap reclaimed: 4200MB freed (now at 46%)
+2024-03-18 02:03:15,000 INFO  [scheduler] Batch job scheduled for retry at 03:00

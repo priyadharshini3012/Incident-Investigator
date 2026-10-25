@@ -1,0 +1,87 @@
+# AI Incident Investigator — Walkthrough
+
+## What Was Built
+
+A complete, working AI Incident Investigator application — full-stack, from scratch.
+
+## Screenshots
+
+![Dashboard — empty state](file:///C:/Users/hipri/.gemini/antigravity/brain/695e8dd5-f881-4af9-b4bf-e51d23d3ea33/dashboard_page_1792464574611.png)
+*Dashboard: dark navy theme, 4 stat cards, sidebar navigation, empty-state CTA*
+
+![Analysis results for db_timeout.log](file:///C:/Users/hipri/.gemini/antigravity/brain/695e8dd5-f881-4af9-b4bf-e51d23d3ea33/analysis_results_1792464742898.png)
+*Analysis results: HIGH severity badge, 4 errors, 1 warning, observed evidence in monospace, possible root causes, recommended actions, similar incidents*
+
+![Incident History table](file:///C:/Users/hipri/.gemini/antigravity/brain/695e8dd5-f881-4af9-b4bf-e51d23d3ea33/incident_history_1792464774405.png)
+*Incident History: searchable/filterable table with severity badges, error/warning counts, timestamps*
+
+## Recording
+
+![Browser test recording](file:///C:/Users/hipri/.gemini/antigravity/brain/695e8dd5-f881-4af9-b4bf-e51d23d3ea33/incident_investigator_test_1792464560779.webp)
+
+---
+
+## Test Results
+
+**61 / 61 tests passed** in 2.66 seconds.
+
+Test coverage:
+- ✅ Log parsing (error counting, pattern detection, severity classification)
+- ✅ File validation (extension, size, encoding)
+- ✅ Database CRUD (save, retrieve, search, filter, embeddings)
+- ✅ All REST API endpoints (`/analyze`, `/incidents`, `/incidents/<id>`, `/health`, `/download`)
+- ✅ All 6 sample log file scenarios
+- ✅ AI engine fallback behavior (reports work without AI models)
+
+---
+
+## Verified Behavior
+
+| Feature | Status | Notes |
+|---|---|---|
+| Flask server starts | ✅ | `http://127.0.0.1:5000` |
+| Dashboard loads | ✅ | 4 stat cards, sidebar nav |
+| File upload + analysis | ✅ | Drag-drop + browse |
+| Rule-based report | ✅ | Works without AI models |
+| SQLite persistence | ✅ | Incidents saved, survive restart |
+| Incident history | ✅ | Search, severity filter, table view |
+| Incident detail view | ✅ | Evidence, causes, actions, report |
+| Report download (.txt/.json) | ✅ | Direct download via Flask endpoint |
+| `/api/health` | ✅ | DB: ok, AI models: not yet installed |
+| Sidebar status indicator | ✅ | Shows "Rule-based mode" (yellow dot) |
+| Empty states | ✅ | Friendly message + CTA button |
+
+---
+
+## AI Models Status
+
+The AI models (`transformers`, `sentence-transformers`) are **not yet installed** in the venv — this is expected. The app fully functions in **Rule-based mode**. 
+
+To enable AI-generated reports:
+
+```powershell
+cd "d:\MYOWNPROJECTS\Incident investigator\backend"
+.\venv\Scripts\activate
+pip install transformers torch sentence-transformers accelerate
+```
+
+After installation, restart `python app.py`. Models download automatically (~390 MB) on first analysis request.
+
+---
+
+## Files Created
+
+| File | Purpose |
+|---|---|
+| `backend/app.py` | Flask REST API |
+| `backend/log_analyzer.py` | Rule-based log parser |
+| `backend/ai_engine.py` | FLAN-T5 + fallback report generator |
+| `backend/incident_search.py` | MiniLM similarity search |
+| `backend/database.py` | SQLite schema and queries |
+| `backend/requirements.txt` | Python dependencies |
+| `frontend/index.html` | Single-page app |
+| `frontend/style.css` | Dark developer theme |
+| `frontend/script.js` | Vanilla JS SPA logic |
+| `sample_logs/*.log` | 6 test scenarios |
+| `tests/test_app.py` | pytest suite (61 tests) |
+| `README.md` | Full documentation |

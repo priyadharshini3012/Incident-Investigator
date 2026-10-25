@@ -1,0 +1,30 @@
+2024-03-16 14:00:01 INFO  [nginx] Server listening on :443
+2024-03-16 14:00:02 INFO  [app] Application started, workers=4
+2024-03-16 14:22:01 INFO  [nginx] GET /dashboard HTTP/1.1 200 1234ms
+2024-03-16 14:22:55 INFO  [nginx] POST /api/payment HTTP/1.1 200 312ms
+2024-03-16 14:23:01 ERROR [app.handler] Unhandled exception in request pipeline
+ Traceback (most recent call last):
+   File "/app/handlers/order.py", line 87, in process_order
+     result = payment_service.charge(card_token, amount)
+   File "/app/services/payment.py", line 44, in charge
+     response = requests.post(PAYMENT_GATEWAY_URL, json=payload, timeout=10)
+   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 565, in send
+     raise ConnectionError(e, request=request)
+ requests.exceptions.ConnectionError: HTTPSConnectionPool(host='payments.gateway.io', port=443): Max retries exceeded
+2024-03-16 14:23:01 ERROR [nginx] POST /api/order HTTP/1.1 500 Internal Server Error 5044ms
+2024-03-16 14:23:02 ERROR [nginx] POST /api/order HTTP/1.1 500 Internal Server Error 5001ms
+2024-03-16 14:23:03 ERROR [nginx] GET  /api/products HTTP/1.1 500 Internal Server Error 4988ms
+2024-03-16 14:23:04 ERROR [app.handler] response code: 500 for path /api/products
+ Traceback (most recent call last):
+   File "/app/handlers/product.py", line 33, in get_products
+     data = cache.get('products')
+   File "/app/cache.py", line 12, in get
+     return self.client.get(key)
+ redis.exceptions.ConnectionError: Error 111 connecting to redis:6379. Connection refused.
+2024-03-16 14:23:05 ERROR [nginx] GET /api/products HTTP/1.1 500 3201ms
+2024-03-16 14:23:06 ERROR [nginx] GET /api/users   HTTP/1.1 500 3199ms
+2024-03-16 14:23:07 ERROR [nginx] POST /api/cart   HTTP/1.1 500 3188ms
+2024-03-16 14:23:08 WARN  [app] Dependency health check failed: redis=DOWN, payment_gateway=UNREACHABLE
+2024-03-16 14:23:09 ERROR [nginx] GET /dashboard   HTTP/1.1 500 Internal Server Error 2901ms
+2024-03-16 14:25:00 INFO  [app] Redis connection restored
+2024-03-16 14:25:30 INFO  [nginx] GET /dashboard   HTTP/1.1 200 233ms

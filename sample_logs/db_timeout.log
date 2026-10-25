@@ -1,0 +1,27 @@
+2024-03-15 08:00:01,123 INFO  [app.server] Application starting on port 8080
+2024-03-15 08:00:02,456 INFO  [db.pool] Connection pool initialized (max=20)
+2024-03-15 08:00:03,789 INFO  [db.pool] Successfully connected to PostgreSQL at db.internal:5432
+2024-03-15 08:12:44,001 INFO  [api.handler] GET /api/users 200 OK in 54ms
+2024-03-15 08:13:01,234 INFO  [api.handler] POST /api/orders 201 Created in 88ms
+2024-03-15 08:15:10,500 WARN  [db.pool] Connection pool utilization at 75% (15/20)
+2024-03-15 08:15:11,512 WARN  [db.pool] Connection pool utilization at 85% (17/20)
+2024-03-15 08:15:12,006 ERROR [db.pool] Connection timeout waiting for available connection after 30000ms
+ java.sql.SQLTimeoutException: Timeout waiting for connection from pool
+    at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:213)
+    at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+    at com.example.app.repository.UserRepository.findById(UserRepository.java:45)
+    at com.example.app.service.UserService.getUser(UserService.java:78)
+2024-03-15 08:15:12,088 ERROR [db.pool] Connection timeout waiting for available connection after 30000ms
+2024-03-15 08:15:13,100 ERROR [db.pool] Connection timeout waiting for available connection after 30000ms
+2024-03-15 08:15:14,200 ERROR [db.pool] Database connection timeout - pool exhausted
+ Caused by: org.postgresql.util.PSQLException: An I/O error occurred while sending to the backend.
+    at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:396)
+2024-03-15 08:15:15,301 ERROR [api.handler] POST /api/checkout - database unavailable
+2024-03-15 08:15:16,402 WARN  [db.pool] Attempting reconnect to db.internal:5432
+2024-03-15 08:15:21,503 ERROR [db.pool] Reconnect attempt 1 failed: connection timed out
+2024-03-15 08:15:26,604 ERROR [db.pool] Reconnect attempt 2 failed: connection timed out
+2024-03-15 08:15:31,705 ERROR [db.pool] Reconnect attempt 3 failed: connection timed out
+2024-03-15 08:15:32,800 WARN  [circuit.breaker] Circuit breaker OPEN for database service
+2024-03-15 08:15:35,900 INFO  [db.pool] Reconnect attempt 4 succeeded
+2024-03-15 08:15:36,001 INFO  [db.pool] Connection pool restored (5/20 connections active)
+2024-03-15 08:16:00,101 INFO  [api.handler] Service restored - accepting requests

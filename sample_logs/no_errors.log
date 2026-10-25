@@ -1,0 +1,16 @@
+2024-03-19 10:00:00 INFO  [app] Server started successfully on port 8080
+2024-03-19 10:00:01 INFO  [db] Database connected at localhost:5432 (pool=10)
+2024-03-19 10:05:12 INFO  [api] GET /api/health 200 OK in 12ms
+2024-03-19 10:06:34 INFO  [api] GET /api/products 200 OK in 45ms — returned 120 items
+2024-03-19 10:07:11 INFO  [api] GET /api/products?category=electronics 200 OK in 38ms
+2024-03-19 10:08:22 INFO  [api] POST /api/cart 201 Created in 61ms
+2024-03-19 10:09:45 INFO  [api] POST /api/checkout 200 OK in 234ms
+2024-03-19 10:11:00 INFO  [api] GET /api/orders/12345 200 OK in 22ms
+2024-03-19 10:15:00 INFO  [scheduler] Cleanup job ran successfully — removed 142 expired sessions
+2024-03-19 10:20:00 INFO  [api] GET /api/dashboard 200 OK in 78ms
+2024-03-19 10:25:00 INFO  [monitor] Health check passed: all systems normal
+2024-03-19 10:30:00 INFO  [monitor] Health check passed: all systems normal
+2024-03-19 10:35:00 INFO  [monitor] Health check passed: all systems normal
+2024-03-19 10:40:00 INFO  [api] GET /api/products 200 OK in 42ms — returned 120 items
+2024-03-19 10:45:00 INFO  [db] Connection pool status: 2/10 active, 8/10 idle
+2024-03-19 10:50:00 INFO  [monitor] Health check passed: all systems normal

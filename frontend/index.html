@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-powered incident investigator: upload server logs, analyze errors, and get structured incident reports with AI-assisted root cause analysis." />
+  <title>AI Incident Investigator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ SIDEBAR -->
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar-brand">
+    <div class="brand-icon" aria-hidden="true">⚡</div>
+    <div class="brand-text">
+      <span class="brand-name">Incident AI</span>
+      <span class="brand-tagline">Investigator</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-item active" id="nav-dashboard" data-page="dashboard" aria-current="page">
+      <span class="nav-icon" aria-hidden="true">📊</span>
+      <span class="nav-label">Dashboard</span>
+    </button>
+    <button class="nav-item" id="nav-analyze" data-page="analyze">
+      <span class="nav-icon" aria-hidden="true">🔍</span>
+      <span class="nav-label">Analyze Log</span>
+    </button>
+    <button class="nav-item" id="nav-history" id="nav-history" data-page="history">
+      <span class="nav-icon" aria-hidden="true">📋</span>
+      <span class="nav-label">History</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-status" id="model-status-bar">
+    <div class="status-dot" id="status-dot" aria-hidden="true"></div>
+    <span class="status-text" id="status-label">Checking models…</span>
+  </div>
+</aside>
+
+<!-- ══════════════════════════════════════════════════════════ MAIN -->
+<main class="main-content" id="main-content">
+
+  <!-- ─── HEADER ─────────────────────────────────────────── -->
+  <header class="top-bar">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle sidebar" aria-expanded="false">☰</button>
+    <div class="top-bar-title" id="page-title">Dashboard</div>
+    <div class="top-bar-actions">
+      <button class="btn btn-primary" id="btn-analyze-header" aria-label="Analyze new log file">
+        + Analyze Log
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── PAGE: DASHBOARD ────────────────────────────────── -->
+  <section class="page active" id="page-dashboard" aria-label="Dashboard overview">
+
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p class="page-subtitle">Overview of all analyzed incidents</p>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="stats-grid" role="region" aria-label="Incident statistics">
+      <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true">📁</div>
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-label">Total Incidents</div>
+      </div>
+      <div class="stat-card stat-danger">
+        <div class="stat-icon" aria-hidden="true">🔴</div>
+        <div class="stat-value" id="stat-errors">—</div>
+        <div class="stat-label">Total Errors</div>
+      </div>
+      <div class="stat-card stat-warn">
+        <div class="stat-icon" aria-hidden="true">⚠️</div>
+        <div class="stat-value" id="stat-warnings">—</div>
+        <div class="stat-label">Total Warnings</div>
+      </div>
+      <div class="stat-card stat-critical">
+        <div class="stat-icon" aria-hidden="true">🚨</div>
+        <div class="stat-value" id="stat-critical">—</div>
+        <div class="stat-label">Critical Incidents</div>
+      </div>
+    </div>
+
+    <!-- Recent incidents -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <h2>Recent Incidents</h2>
+        <button class="btn btn-secondary btn-sm" id="btn-refresh-dashboard">↻ Refresh</button>
+      </div>
+      <div id="recent-incidents-container">
+        <div class="loading-state" id="dashboard-loading">
+          <div class="spinner" aria-hidden="true"></div>
+          <span>Loading incidents…</span>
+        </div>
+        <div class="empty-state hidden" id="dashboard-empty">
+          <div class="empty-icon" aria-hidden="true">📭</div>
+          <h3>No incidents yet</h3>
+          <p>Upload your first log file to get started.</p>
+          <button class="btn btn-primary" id="btn-first-analyze">Analyze a Log File</button>
+        </div>
+        <div class="incident-list" id="dashboard-incident-list" role="list"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ─── PAGE: ANALYZE ──────────────────────────────────── -->
+  <section class="page hidden" id="page-analyze" aria-label="Log file analysis">
+
+    <div class="page-header">
+      <h1>Analyze Log File</h1>
+      <p class="page-subtitle">Upload a <code>.log</code> or <code>.txt</code> file — max 16 MB</p>
+    </div>
+
+    <!-- Upload zone -->
+    <div class="section-card">
+      <div
+        class="drop-zone"
+        id="drop-zone"
+        role="button"
+        tabindex="0"
+        aria-label="Drop log file here or click to browse"
+      >
+        <div class="drop-zone-icon" aria-hidden="true">📂</div>
+        <div class="drop-zone-text">
+          <strong>Drop a log file here</strong>
+          <span>or click to browse</span>
+        </div>
+        <div class="drop-zone-hint">.log and .txt files up to 16 MB</div>
+        <input type="file" id="file-input" accept=".log,.txt" aria-hidden="true" tabindex="-1" />
+      </div>
+
+      <div class="file-info hidden" id="file-info">
+        <span class="file-icon" aria-hidden="true">📄</span>
+        <div class="file-meta">
+          <span class="file-name" id="selected-filename">—</span>
+          <span class="file-size" id="selected-filesize">—</span>
+        </div>
+        <button class="btn btn-danger btn-sm" id="btn-clear-file">✕ Remove</button>
+      </div>
+
+      <div class="upload-error hidden" id="upload-error" role="alert"></div>
+
+      <div class="upload-actions">
+        <button class="btn btn-primary btn-lg" id="btn-analyze" disabled aria-label="Start log analysis">
+          <span class="btn-icon" aria-hidden="true">🔍</span> Analyze Log
+        </button>
+      </div>
+    </div>
+
+    <!-- Analysis progress -->
+    <div class="section-card hidden" id="analysis-progress-card">
+      <div class="progress-header">
+        <div class="spinner" aria-hidden="true"></div>
+        <span id="progress-label">Analyzing log file…</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <p class="progress-note">AI model may take a moment on first run.</p>
+    </div>
+
+    <!-- Results -->
+    <div class="hidden" id="analysis-results">
+
+      <!-- Summary banner -->
+      <div class="result-banner" id="result-banner">
+        <div class="banner-left">
+          <span class="severity-badge" id="result-severity">—</span>
+          <div>
+            <div class="banner-filename" id="result-filename">—</div>
+            <div class="banner-summary" id="result-summary">—</div>
+          </div>
+        </div>
+        <div class="banner-stats">
+          <div class="banner-stat">
+            <span class="banner-stat-val" id="result-errors">—</span>
+            <span class="banner-stat-lbl">Errors</span>
+          </div>
+          <div class="banner-stat">
+            <span class="banner-stat-val" id="result-warnings">—</span>
+            <span class="banner-stat-lbl">Warnings</span>
+          </div>
+          <div class="banner-stat">
+            <span class="banner-stat-val" id="result-lines">—</span>
+            <span class="banner-stat-lbl">Lines</span>
+          </div>
+        </div>
+        <div class="banner-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-download-txt">⬇ .txt</button>
+          <button class="btn btn-secondary btn-sm" id="btn-download-json">⬇ .json</button>
+        </div>
+      </div>
+
+      <!-- Two-column layout: left = report, right = similar -->
+      <div class="results-grid">
+
+        <!-- Evidence -->
+        <div class="section-card result-section">
+          <h2>Observed Evidence</h2>
+          <p class="section-hint">Log lines captured as supporting evidence</p>
+          <div class="evidence-list" id="evidence-list" role="list"></div>
+        </div>
+
+        <!-- Causes -->
+        <div class="section-card result-section">
+          <h2>Possible Root Causes</h2>
+          <p class="section-hint">Plausible explanations based on evidence — not confirmed</p>
+          <div class="cause-list" id="cause-list" role="list"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="section-card result-section">
+          <h2>Recommended Actions</h2>
+          <p class="section-hint">Practical troubleshooting steps</p>
+          <ol class="action-list" id="action-list"></ol>
+        </div>
+
+        <!-- Similar incidents -->
+        <div class="section-card result-section" id="similar-section">
+          <h2>Similar Past Incidents</h2>
+          <p class="section-hint">Similarity score reflects textual resemblance only — not confirmed same cause</p>
+          <div id="similar-list" role="list"></div>
+        </div>
+
+      </div>
+
+      <!-- Full report -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h2>Full Analysis Report</h2>
+          <div class="method-badge" id="method-badge"></div>
+        </div>
+        <pre class="report-text" id="report-text" aria-label="Full incident report text"></pre>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ─── PAGE: HISTORY ──────────────────────────────────── -->
+  <section class="page hidden" id="page-history" aria-label="Incident history">
+
+    <div class="page-header">
+      <h1>Incident History</h1>
+      <p class="page-subtitle">All previously analyzed log files</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <span class="search-icon" aria-hidden="true">🔎</span>
+        <input
+          type="search"
+          class="search-input"
+          id="history-search"
+          placeholder="Search by filename or summary…"
+          aria-label="Search incidents"
+        />
+      </div>
+      <select class="select-input" id="history-severity" aria-label="Filter by severity">
+        <option value="">All severities</option>
+        <option value="CRITICAL">🚨 Critical</option>
+        <option value="HIGH">🔴 High</option>
+        <option value="MEDIUM">🟠 Medium</option>
+        <option value="LOW">🟡 Low</option>
+        <option value="INFO">🟢 Info</option>
+      </select>
+    </div>
+
+    <div class="section-card">
+      <div class="loading-state" id="history-loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <span>Loading history…</span>
+      </div>
+      <div class="empty-state hidden" id="history-empty">
+        <div class="empty-icon" aria-hidden="true">📭</div>
+        <h3>No incidents match your search</h3>
+        <p>Try a different search term or clear the filters.</p>
+      </div>
+      <div class="incident-table-wrap">
+        <table class="incident-table hidden" id="history-table" aria-label="Incident history table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Filename</th>
+              <th scope="col">Severity</th>
+              <th scope="col">Errors</th>
+              <th scope="col">Warnings</th>
+              <th scope="col">Analyzed At</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ─── PAGE: INCIDENT DETAIL ──────────────────────────── -->
+  <section class="page hidden" id="page-detail" aria-label="Incident report detail">
+
+    <div class="page-header">
+      <button class="btn btn-secondary btn-sm" id="btn-back-history">← Back</button>
+      <div>
+        <h1 id="detail-title">Incident Report</h1>
+        <p class="page-subtitle" id="detail-subtitle"></p>
+      </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="result-banner" id="detail-banner">
+      <div class="banner-left">
+        <span class="severity-badge" id="detail-severity">—</span>
+        <div>
+          <div class="banner-filename" id="detail-filename">—</div>
+          <div class="banner-summary" id="detail-summary">—</div>
+        </div>
+      </div>
+      <div class="banner-stats">
+        <div class="banner-stat">
+          <span class="banner-stat-val" id="detail-errors">—</span>
+          <span class="banner-stat-lbl">Errors</span>
+        </div>
+        <div class="banner-stat">
+          <span class="banner-stat-val" id="detail-warnings">—</span>
+          <span class="banner-stat-lbl">Warnings</span>
+        </div>
+      </div>
+      <div class="banner-actions">
+        <button class="btn btn-secondary btn-sm" id="detail-dl-txt">⬇ .txt</button>
+        <button class="btn btn-secondary btn-sm" id="detail-dl-json">⬇ .json</button>
+      </div>
+    </div>
+
+    <div class="results-grid">
+      <div class="section-card result-section">
+        <h2>Observed Evidence</h2>
+        <div class="evidence-list" id="detail-evidence" role="list"></div>
+      </div>
+      <div class="section-card result-section">
+        <h2>Possible Root Causes</h2>
+        <div class="cause-list" id="detail-causes" role="list"></div>
+      </div>
+      <div class="section-card result-section">
+        <h2>Recommended Actions</h2>
+        <ol class="action-list" id="detail-actions"></ol>
+      </div>
+      <div class="section-card result-section">
+        <h2>Similar Past Incidents</h2>
+        <p class="section-hint">Similarity reflects textual resemblance only</p>
+        <div id="detail-similar" role="list"></div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h2>Full Report</h2>
+      <pre class="report-text" id="detail-report" aria-label="Full incident report text"></pre>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════ TOAST -->
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

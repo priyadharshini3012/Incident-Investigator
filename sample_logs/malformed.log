@@ -1,0 +1,22 @@
+This file contains malformed and mixed content for testing the parser's resilience.
+
+NOT_A_TIMESTAMP some random text without any log level
+2024-13-45 99:99:99 INVALID_LEVEL this line has a bad timestamp and unknown level
+null
+\x00\x01\x02 binary-like garbage characters in a text file
+2024-03-20 [corrupted] ][][][ garbled ][][
+ERROR without timestamp this line has no timestamp but has a level
+2024-03-20 12:00:00 ERROR legitimate error line mixed with garbage
+WARN another line with level but no timestamp or message
+2024-03-20 12:01:00 INFO normal line
+2024-03-20 12:01:01 ERROR NullPointerException in mixed content
+   at com.example.App.run(App.java:10)
+@#$%^&*() completely unrelated content with special characters
+2024-03-20 12:02:00 DEBUG debug level only
+CRITICAL no-timestamp critical message
+2024-03-20 12:03:00 WARN duplicate
+2024-03-20 12:03:00 WARN duplicate
+
+repeated line
+repeated line
+repeated line

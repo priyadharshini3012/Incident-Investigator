@@ -1,0 +1,21 @@
+2024-03-17 09:00:00 INFO  [auth.service] Authentication service started
+2024-03-17 09:00:01 INFO  [auth.service] JWT signing key loaded successfully
+2024-03-17 09:15:22 INFO  [auth.service] User admin@example.com authenticated successfully
+2024-03-17 09:15:55 INFO  [auth.service] User developer@example.com authenticated successfully
+2024-03-17 09:30:00 WARN  [auth.service] JWT signing key rotated — invalidating existing tokens
+2024-03-17 09:30:01 ERROR [auth.service] Authentication failed for user admin@example.com: invalid token signature
+2024-03-17 09:30:01 ERROR [auth.service] Authentication failed for user developer@example.com: invalid token
+2024-03-17 09:30:02 ERROR [auth.service] Authentication failed for user ops@example.com: JWT signature verification failed
+2024-03-17 09:30:03 ERROR [auth.service] Authentication failed for service account svc-deploy: invalid credentials
+2024-03-17 09:30:04 ERROR [auth.service] Authentication failed for service account svc-monitor: access denied
+2024-03-17 09:30:05 ERROR [auth.middleware] 401 Unauthorized: GET /api/admin/users
+2024-03-17 09:30:05 ERROR [auth.middleware] 401 Unauthorized: POST /api/admin/config
+2024-03-17 09:30:06 ERROR [auth.middleware] 403 Forbidden: GET /api/reports — insufficient permissions
+2024-03-17 09:30:07 WARN  [auth.service] Brute force detection: 5 failed authentication attempts from IP 10.0.1.45
+2024-03-17 09:30:08 ERROR [auth.service] Authentication failed — invalid password for user root@example.com
+2024-03-17 09:30:09 ERROR [auth.service] Authentication failed — invalid password for user root@example.com
+2024-03-17 09:30:10 ERROR [auth.service] Authentication failed — invalid password for user root@example.com
+2024-03-17 09:30:11 WARN  [auth.service] Account locked after repeated failures: root@example.com
+2024-03-17 09:30:12 WARN  [auth.service] Suspicious login attempt from new location: country=RU ip=185.220.101.x
+2024-03-17 09:35:00 INFO  [auth.service] JWT key rotation acknowledged by all services — tokens reissued
+2024-03-17 09:35:30 INFO  [auth.service] User admin@example.com authenticated successfully with new token
